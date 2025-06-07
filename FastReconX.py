@@ -5,6 +5,26 @@ import threading
 import platform
 import sys
 
+import pyfiglet
+
+
+def print_color(text, color_code):
+    color_start = f"\033[{color_code}m"
+    reset_color = "\033[0m"
+    print(f"{color_start}{text}{reset_color}")
+res = pyfiglet.figlet_format("FastreconX", width=100)
+
+group = '''
+Join the thriving community of Cyber Elite, where collective knowledge enhances
+digital security, creating a robust and resilient online environment for all.
+
+<!-- Project Name : FastReconX -->
+
+
+'''
+print_color(res, "91") 
+print_color(group, "92") 
+
 # ------------------- Fast Port Scanner (Multi-threaded) -------------------
 def scan_port(target, port):
     try:
