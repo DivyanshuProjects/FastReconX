@@ -26,7 +26,7 @@ print_color(res, "91")
 print_color(group, "92") 
 
 # ------------------- Fast Port Scanner (Multi-threaded) -------------------
-res = pyfiglet.figlet_format("Ports", width=100)
+
 def scan_port(target, port):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -49,7 +49,7 @@ def scan_ports_fast(target):
         t.join()
 
 # ------------------- Subdomain Finder -------------------
-res = pyfiglet.figlet_format("Subdomain", width=100)
+
 def find_subdomains(domain):
     print(f"\n[🌐] Finding subdomains for {domain} using subdomains.txt...")
     try:
@@ -68,7 +68,7 @@ def find_subdomains(domain):
             pass
 
 # ------------------- Directory Fuzzer -------------------
-res = pyfiglet.figlet_format("Directory fuzzer", width=100)
+
 def directory_fuzz(base_url):
     print(f"\n[📂] Fuzzing Directories at {base_url}")
     wordlist = ["admin", "login", "dashboard", "uploads", "images", "api", "config"]
@@ -82,7 +82,7 @@ def directory_fuzz(base_url):
             pass
 
 # ------------------- Basic OS Detection -------------------
-res = pyfiglet.figlet_format("Os Detection", width=100)
+
 def os_detection(target):
     print(f"\n[🧠] Attempting basic OS detection for {target}...")
     try:
