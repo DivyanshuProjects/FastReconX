@@ -2,7 +2,7 @@ FastReconX
 
 
 
-ReconStorm is a fast, multi-functional reconnaissance tool designed for security professionals and bug bounty hunters. It combines port scanning, subdomain enumeration, directory fuzzing, and basic OS fingerprinting into a single easy-to-use CLI tool.
+FastReconX is a fast, multi-functional reconnaissance tool designed for security professionals and bug bounty hunters. It combines port scanning, subdomain enumeration, directory fuzzing, and basic OS fingerprinting into a single easy-to-use CLI tool.
 
 ---
 
