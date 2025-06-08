@@ -28,6 +28,8 @@ print_color(group, "92")
 # ------------------- Port Scanner -------------------
 
 def scan_port(target, port):
+    res = pyfiglet.figlet_format("PortScan", width=100)
+    print_color(res, "16")
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(1)
