@@ -2,43 +2,50 @@ import socket
 import requests
 import argparse
 import threading
-import platform
+import pyfiglet
 import sys
 
-import pyfiglet
-
+# ------------------- Global Helpers -------------------
 
 def print_color(text, color_code):
     color_start = f"\033[{color_code}m"
     reset_color = "\033[0m"
     print(f"{color_start}{text}{reset_color}")
-res = pyfiglet.figlet_format("FastreconX", width=100)
 
+# ------------------- ASCII Banner -------------------
+
+res = pyfiglet.figlet_format("FastreconX", width=100)
 group = '''
 Join the thriving community of Cyber Elite, where collective knowledge enhances
 digital security, creating a robust and resilient online environment for all.
 
 <!-- Project Name : FastReconX -->
-
-
 '''
-print_color(res, "91") 
-print_color(group, "92") 
 
-# ------------------- Fast Port Scanner (Multi-threaded) -------------------
+print_color(res, "91")
+print_color(group, "92")
+
+# ------------------- Port Scanner -------------------
 
 def scan_port(target, port):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(1)
         result = sock.connect_ex((target, port))
+        
         if result == 0:
-            print(f"[+] Port {port} is OPEN")
+            try:
+                services =socket.getservbyport(port)
+            except:
+                services ="Unkown"
+
+            print(f"[+] Port {port} is OPEN -> Services => {services}")
         sock.close()
     except:
         pass
 
 def scan_ports_fast(target):
+
     print(f"\n[🔍] Scanning ports on {target} (1-1024) using -sT (TCP Connect)...")
     threads = []
     for port in range(1, 1025):
@@ -51,18 +58,22 @@ def scan_ports_fast(target):
 # ------------------- Subdomain Finder -------------------
 
 def find_subdomains(domain):
+    res = pyfiglet.figlet_format("Subdomain", width=100)
+    print_color(res, "16")
     print(f"\n[🌐] Finding subdomains for {domain} using subdomains.txt...")
+
     try:
         with open("subdomains.txt", "r") as file:
             subdomains = file.read().splitlines()
     except FileNotFoundError:
-        print("[!] subdomains.txt file not found.")
+        print("[!] subdomains.txt not found. Please create this file with one subdomain per line.")
         return
 
+    headers = {'User-Agent': 'Mozilla/5.0'}
     for sub in subdomains:
         url = f"http://{sub}.{domain}"
         try:
-            requests.get(url, timeout=3)
+            requests.get(url, headers=headers, timeout=3)
             print(f"[+] Found: {url}")
         except requests.ConnectionError:
             pass
@@ -70,21 +81,29 @@ def find_subdomains(domain):
 # ------------------- Directory Fuzzer -------------------
 
 def directory_fuzz(base_url):
+    res = pyfiglet.figlet_format("Directory Fuzzer", width=100)
+    print_color(res, "16")
     print(f"\n[📂] Fuzzing Directories at {base_url}")
+
     wordlist = ["admin", "login", "dashboard", "uploads", "images", "api", "config"]
+    headers = {'User-Agent': 'Mozilla/5.0'}
+
     for word in wordlist:
         url = f"{base_url.rstrip('/')}/{word}"
         try:
-            response = requests.get(url, timeout=3)
-            if response.status_code not in [404, 403]:
+            response = requests.get(url, headers=headers, timeout=3)
+            if response.status_code < 400:
                 print(f"[+] Found: {url} - Status: {response.status_code}")
         except requests.RequestException:
             pass
 
-# ------------------- Basic OS Detection -------------------
+# ------------------- OS Detection -------------------
 
 def os_detection(target):
+    res = pyfiglet.figlet_format("OS Detection", width=100)
+    print_color(res, "16")
     print(f"\n[🧠] Attempting basic OS detection for {target}...")
+
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(3)
@@ -101,7 +120,8 @@ def os_detection(target):
     finally:
         sock.close()
 
-# ------------------- Run All -------------------
+# ------------------- Run All Modules -------------------
+
 def run_all(target):
     scan_ports_fast(target)
     find_subdomains(target)
@@ -109,6 +129,7 @@ def run_all(target):
     os_detection(target)
 
 # ------------------- Argument Parser -------------------
+
 def main():
     parser = argparse.ArgumentParser(description="🛠️ Fast Recon Tool with OS Detection")
     parser.add_argument("target", help="Target IP or domain")
@@ -135,6 +156,7 @@ def main():
     if not (args.all or args.ports or args.subfinder or args.gobuster or args.osdetect):
         print("[!] No module selected. Use -h for help.")
 
-# ------------------- Entry -------------------
+# ------------------- Entry Point -------------------
+
 if __name__ == "__main__":
     main()
