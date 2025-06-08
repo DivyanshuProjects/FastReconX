@@ -1,4 +1,5 @@
 import socket
+from queue import Queue
 import requests
 import argparse
 import threading
@@ -82,16 +83,9 @@ def find_subdomains(domain):
             pass
 
 # ------------------- Directory Fuzzer -------------------
-
-def directory_fuzz(base_url):
-    D = pyfiglet.figlet_format("Directory Fuzzer", width=100,font="straight")
-    print_color(D, "94")
-    print(f"\n[📂] Fuzzing Directories at {base_url}")
-
-    wordlist = ["admin", "login", "dashboard", "uploads", "images", "api", "config"]
-    headers = {'User-Agent': 'Mozilla/5.0'}
-
-    for word in wordlist:
+def worker(base_url, queue, headers):
+    while not queue.empty():
+        word = queue.get()
         url = f"{base_url.rstrip('/')}/{word}"
         try:
             response = requests.get(url, headers=headers, timeout=3)
@@ -99,6 +93,64 @@ def directory_fuzz(base_url):
                 print(f"[+] Found: {url} - Status: {response.status_code}")
         except requests.RequestException:
             pass
+        queue.task_done()
+
+def directory_fuzz(base_url, thread_count=20):
+    D = pyfiglet.figlet_format("Directory Fuzzer", width=100, font="straight")
+    print_color(D, "94")
+    print(f"\n[📂] Fuzzing Directories at {base_url} with {thread_count} threads\n")
+
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    wordlist_path = "parameters.txt"
+
+    # Load wordlist
+    try:
+        with open(wordlist_path, "r") as f:
+            words = [line.strip() for line in f if line.strip()]
+    except FileNotFoundError:
+        print("[!] Wordlist file 'parameters.txt' not found.")
+        return
+
+    queue = Queue()
+    for word in words:
+        queue.put(word)
+
+    threads = []
+    for _ in range(thread_count):
+        t = threading.Thread(target=worker, args=(base_url, queue, headers))
+        t.daemon = True
+        t.start()
+        threads.append(t)
+
+    queue.join()
+
+    print("\n[✔] Fuzzing Complete.")
+
+
+# def directory_fuzz(base_url):
+#     D = pyfiglet.figlet_format("Directory Fuzzer", width=100, font="straight")
+#     print_color(D, "94")
+#     print(f"\n[📂] Fuzzing Directories at {base_url}")
+
+#     headers = {'User-Agent': 'Mozilla/5.0'}
+#     wordlist_path = "parameters.txt"
+
+#     # Load words from parameters.txt
+#     try:
+#         with open(wordlist_path, "r") as f:
+#             wordlist = [line.strip() for line in f if line.strip()]
+#     except FileNotFoundError:
+#         print("[!] Wordlist file 'parameters.txt' not found.")
+#         return
+
+#     for word in wordlist:
+#         url = f"{base_url.rstrip('/')}/{word}"
+#         try:
+#             response = requests.get(url, headers=headers, timeout=3)
+#             if response.status_code < 400:
+#                 print(f"[+] Found: {url} - Status: {response.status_code}")
+#         except requests.RequestException:
+#             pass
 
 # ------------------- OS Detection -------------------
 
