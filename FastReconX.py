@@ -28,8 +28,7 @@ print_color(group, "92")
 # ------------------- Port Scanner -------------------
 
 def scan_port(target, port):
-    res = pyfiglet.figlet_format("PortScan", width=100)
-    print_color(res, "16")
+    
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(1)
@@ -48,6 +47,8 @@ def scan_port(target, port):
 
 def scan_ports_fast(target):
 
+    P = pyfiglet.figlet_format("PortScaned", width=100,font="straight")
+    print_color(P, "94")
     print(f"\n[🔍] Scanning ports on {target} (1-1024) using -sT (TCP Connect)...")
     threads = []
     for port in range(1, 1025):
@@ -60,8 +61,8 @@ def scan_ports_fast(target):
 # ------------------- Subdomain Finder -------------------
 
 def find_subdomains(domain):
-    res = pyfiglet.figlet_format("Subdomain", width=100)
-    print_color(res, "16")
+    SF = pyfiglet.figlet_format("Subdomain", width=100,font="straight")
+    print_color(SF, "94")
     print(f"\n[🌐] Finding subdomains for {domain} using subdomains.txt...")
 
     try:
@@ -83,8 +84,8 @@ def find_subdomains(domain):
 # ------------------- Directory Fuzzer -------------------
 
 def directory_fuzz(base_url):
-    res = pyfiglet.figlet_format("Directory Fuzzer", width=100)
-    print_color(res, "16")
+    D = pyfiglet.figlet_format("Directory Fuzzer", width=100,font="straight")
+    print_color(D, "94")
     print(f"\n[📂] Fuzzing Directories at {base_url}")
 
     wordlist = ["admin", "login", "dashboard", "uploads", "images", "api", "config"]
@@ -102,8 +103,8 @@ def directory_fuzz(base_url):
 # ------------------- OS Detection -------------------
 
 def os_detection(target):
-    res = pyfiglet.figlet_format("OS Detection", width=100)
-    print_color(res, "16")
+    OS = pyfiglet.figlet_format("OS Detection", width=100,font="straight")
+    print_color(OS, "94")
     print(f"\n[🧠] Attempting basic OS detection for {target}...")
 
     try:
